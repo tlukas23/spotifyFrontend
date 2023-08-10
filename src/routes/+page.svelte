@@ -1,13 +1,123 @@
 <script>
+    import { redirect } from '@sveltejs/kit';
     import LogoutButton from '../lib/components/LogoutButton.svelte'
-    import SpotifyLyrics from '../lib/components/SpotifyLyrics.svelte'
+    import SpotifyLyrics from '../lib/components/SpotifyLyrics.svelte';
+    import { goto } from '$app/navigation';
     export let data
     
+    function login() {
+        goto('/login')
+    }
 </script>
 
-{#if data.accessToken == null}
-<a class="btn" href="/login">Login</a>
-{:else}
-<div><SpotifyLyrics userToken={data.accessToken}/></div>
-<div><LogoutButton /></div>
-{/if}
+<div id="app">
+    {#if data.accessToken == null}
+    <div id="wrapper">
+        <h1 class="glitch" data-text="(Spooky Title)">(Spooky Title)</h1>
+    </div>
+    <button class="btn-link" on:click={()=> login()}>
+        Login
+    </button>
+    {:else}
+    <div><SpotifyLyrics userToken={data.accessToken}/></div>
+    <div><LogoutButton /></div>
+    {/if}
+</div>
+
+
+<style lang=scss>
+@font-face{
+    font-family: HelpMe;
+    src: url(../fonts/HelpMe.ttf) format("trueType");
+}
+   h1 {
+  padding: 0;
+  margin: 0;
+  font-family: HelpMe;
+}
+
+#app {
+  background: #000;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+}
+
+#wrapper {
+  text-align: center;
+}
+
+@mixin glitchCopy {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch {
+  position: relative;
+  color: #fff;
+  font-size: 4em;
+  letter-spacing: 0.5em;
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+
+  &::before {
+    @include glitchCopy;
+    left: 2px;
+    text-shadow: -2px 0 #ff4a54;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+  }
+
+  &::after {
+    @include glitchCopy;
+    left: -2px;
+    text-shadow: -2px 0 #ff4a54, 2px 2px #ff4a54;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim2 5s infinite linear alternate-reverse;
+  }
+}
+
+@keyframes glitch-anim {
+  $steps: 20;
+  @for $i from 0 to $steps {
+    #{percentage($i*calc(1 / $steps))} {
+      clip: rect(random(100) + px, 9999px, random(100) + px, 0);
+      transform: skew(calc(random(100) / 100) + deg);
+    }
+  }
+}
+
+@keyframes glitch-anim2 {
+  $steps: 20;
+  @for $i from 0 to $steps {
+    #{percentage($i*calc(1 / $steps))} {
+      clip: rect(random(100) + px, 9999px, random(100) + px, 0);
+      transform: skew(calc(random(100) / 100) + deg);
+    }
+  }
+}
+
+@keyframes glitch-skew {
+  $steps: 10;
+  @for $i from 0 to $steps {
+    #{percentage($i*calc(1 / $steps))} {
+      transform: skew((random(10) - 5) + deg);
+    }
+  }
+}
+
+
+
+</style>
